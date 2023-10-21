@@ -49,6 +49,16 @@ export const updateUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: document });
 });
 
+export const getInfo = asyncHandler(async(req,res,next)=>{
+  const user = await User.findById(req.user._id);
+console.log(req.user._id)
+  if (!user){
+    return next(new ApiError("user not found"))
+  }
+
+  res.status(200).json(user)
+})
+
 export const changeUserPassword = asyncHandler(async (req, res, next) => {
   const document = await User.findByIdAndUpdate(
     req.params.id,

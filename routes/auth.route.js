@@ -2,6 +2,7 @@ import express from "express";
 import {
   forgetPassword,
   login,
+  protect,
   resetPassword,
   singup,
   verifyResetCode,
@@ -11,7 +12,7 @@ import {
   signUpValidator,
 } from "../utils/validators/authValidator.js";
 import { uploadSingleImage } from "../middlewares/uploadImage.middlesare.js";
-import { resizeImage } from "../controllers/user.controller.js";
+import { getInfo, resizeImage } from "../controllers/user.controller.js";
 
 const router = express.Router();
 
@@ -26,5 +27,7 @@ router.post("/login", loginValidator, login);
 router.post("/forgetPassword", forgetPassword);
 router.post("/verifyResetCode", verifyResetCode);
 router.put("/resetPassword", resetPassword);
+router.get("/info", protect, getInfo);
+
 
 export default router;

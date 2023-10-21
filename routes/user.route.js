@@ -6,6 +6,7 @@ import {
   createUser,
   deActivate,
   deleteUser,
+  getInfo,
   getLoggedUserData,
   getUser,
   getUsers,
@@ -27,7 +28,7 @@ router.get("/me", protect, getLoggedUserData, getUser);
 router.get("/me/deActive", protect, deActivate);
 router.get("/me/active", protect, activate);
 
-router.use(protect, allowedTo("admin", "manager"));
+// router.use(protect, allowedTo("admin", "manager"));
 
 router.post(
   "/create",

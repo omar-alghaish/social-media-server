@@ -25,6 +25,11 @@ const userSchema = mongoose.Schema(
     profileImg: {
       type: String,
     },
+    info: {
+      type: String,
+    },
+    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
     password: {
       type: String,
       required: [true, "password required"],

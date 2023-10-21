@@ -28,7 +28,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "uploads")));
 morganConfig(app);
 
-app.use("/api", limiter);
+// app.use("/api", limiter);
 
 app.use("/api/v1", routes);
 

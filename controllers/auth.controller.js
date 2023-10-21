@@ -45,46 +45,42 @@ export const login = asyncHandler(async (req, res, next) => {
 
 // make sure the user is logged in
 export const protect = asyncHandler(async (req, res, next) => {
-  // check if token exist
+  // check if token exists in headers
   let token;
-  if (req.headers.authorization) {
+  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+    // Extract token from the authorization header
     token = req.headers.authorization.split(" ")[1];
   }
+
   if (!token) {
-    return next(new ApiError("You are not login", 401));
+    return next(new ApiError("You are not logged in", 401));
   }
 
-  // verify token (no change happens, expired token)
-  const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
+  try {
+    // verify token (no change happens, expired token)
+    const decoded = jwt.verify(token, process.env.JWT_SECRET_KEY);
 
-  // check if user exists
-  const currentUser = await User.findById(decoded.userId);
-  if (!currentUser) {
-    return next(
-      new ApiError(
-        "The user that belong to this token does no longer exist",
-        401
-      )
-    );
-  }
-
-  // check if user change his password after token created
-  if (currentUser.passwordChangedAt) {
-    const passChagedTimeStamp = parseInt(
-      currentUser.passwordChangedAt.getTime() / 1000,
-      10
-    );
-    if (passChagedTimeStamp > decoded.iat) {
-      return next(
-        new ApiError(
-          "User recently change his password. please login again...",
-          401
-        )
-      );
+    // check if user exists
+    const currentUser = await User.findById(decoded.userId);
+    if (!currentUser) {
+      return next(new ApiError("The user belonging to this token does not exist", 401));
     }
+
+    // check if user changed his password after the token was issued
+    if (currentUser.passwordChangedAt) {
+      const passwordChangedTimestamp = parseInt(currentUser.passwordChangedAt.getTime() / 1000, 10);
+      if (passwordChangedTimestamp > decoded.iat) {
+        return next(new ApiError("User recently changed his password. Please login again.", 401));
+      }
+    }
+
+    // Attach the user object to the request for further middleware to use
+    req.user = currentUser;
+    next();
+  } catch (error) {
+    // Handle token verification errors (expired token, invalid signature, etc.)
+    return next(new ApiError("Invalid token. Please login again.", 401));
   }
-  req.user = currentUser;
-  next();
 });
 
 export const allowedTo = (...roles) =>
