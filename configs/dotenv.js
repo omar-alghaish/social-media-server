@@ -2,7 +2,7 @@ import dotenv from "dotenv";
 
 const dotenvConfig = () =>
   dotenv.config({
-    path: "config.env",
+    path: ".env",
   });
 
 export default dotenvConfig;
