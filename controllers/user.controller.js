@@ -7,7 +7,7 @@ import ApiError from "../utils/apiError.js";
 
 export const resizeImage = asyncHandler(async (req, res, next) => {
   const filename = `user-${Date.now()}.jpeg`;
-console.log(req.body)
+  console.log(req.body);
   if (req.file) {
     await sharp(req.file.buffer)
       .resize(600, 600)
@@ -49,15 +49,15 @@ export const updateUser = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: document });
 });
 
-export const getInfo = asyncHandler(async(req,res,next)=>{
+export const getInfo = asyncHandler(async (req, res, next) => {
   const user = await User.findById(req.user._id);
-console.log(req.user._id)
-  if (!user){
-    return next(new ApiError("user not found"))
+  console.log(req.user._id);
+  if (!user) {
+    return next(new ApiError("user not found"));
   }
 
-  res.status(200).json(user)
-})
+  res.status(200).json(user);
+});
 
 export const changeUserPassword = asyncHandler(async (req, res, next) => {
   const document = await User.findByIdAndUpdate(
