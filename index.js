@@ -18,8 +18,15 @@ dotenvConfig();
 dbConnection();
 
 const app = express();
+const corsOptions = {
+  origin: 'https://arabia1.web.app', // Update this with your frontend domain
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204,
+};
 
-app.use(cors());
+app.use(cors(corsOptions));
+
 app.use(express.json());
 
 const __filename = fileURLToPath(import.meta.url);
