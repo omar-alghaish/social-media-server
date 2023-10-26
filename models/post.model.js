@@ -8,15 +8,21 @@ const postSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
+    userName:{
+      type:String,
+    },
+    userProfile:{
+type:String
+    },
     content: {
       type: String,
     },
     media: [
       {
-        mimetype:String,
-        filename:String,
-        path:String,
-        size:Number,
+        mimetype: String,
+        filename: String,
+        path: String,
+        size: Number,
       },
     ],
     likes: [
@@ -27,7 +33,7 @@ const postSchema = mongoose.Schema(
     ],
     comments: [
       {
-        user: {
+        userId: {
           type: mongoose.Schema.Types.ObjectId,
           ref: "User",
           required: true,
@@ -35,6 +41,12 @@ const postSchema = mongoose.Schema(
         text: {
           type: String,
           required: true,
+        },
+        userProfile: {
+          type: String,
+        },
+        userName: {
+          type: String,
         },
         createdAt: {
           type: Date,
@@ -49,26 +61,31 @@ const postSchema = mongoose.Schema(
 //get update
 postSchema.post("init", (doc) => {
   if (doc.media) {
-    let mediaArray = []
-    doc.media.map((item)=>{
-        mediaArray.push({...item, path:`${process.env.BASE_URL}/posts/${item.filename}`}) 
-    })
-  doc.media= mediaArray
-}
-  });
-  
-  //create
-  postSchema.post("save", (doc) => {
-    if (doc.media) {
-        let mediaArray = []
-        doc.media.map((item)=>{
-            mediaArray.push({...item, path:`${process.env.BASE_URL}/posts/${item.filename}`}) 
-        })
-      doc.media= mediaArray
-    }
-  });
+    let mediaArray = [];
+    doc.media.map((item) => {
+      mediaArray.push({
+        ...item,
+        path: `${process.env.BASE_URL}/posts/${item.filename}`,
+      });
+    });
+    doc.media = mediaArray;
+  }
+});
 
-const Post = mongoose.model('Post', postSchema);
+//create
+postSchema.post("save", (doc) => {
+  if (doc.media) {
+    let mediaArray = [];
+    doc.media.map((item) => {
+      mediaArray.push({
+        ...item,
+        path: `${process.env.BASE_URL}/posts/${item.filename}`,
+      });
+    });
+    doc.media = mediaArray;
+  }
+});
+
+const Post = mongoose.model("Post", postSchema);
 
 export default Post;
-

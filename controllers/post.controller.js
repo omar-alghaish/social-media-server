@@ -4,10 +4,11 @@ import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 
 export const createPost = asyncHandler(async (req, res, next) => {
-  const data = req.body;
   const mediaFiles = req.files;
   const newPost = await Post.create({
     user: req.user.id,
+    userProfile: req.user.profileImg,
+    userName: req.user.name,
     content: req.body.content,
     media: mediaFiles,
   });
@@ -28,10 +29,24 @@ export const likePost = asyncHandler(async (req, res, next) => {
     if (index !== -1) {
       post.likes.splice(index, 1);
     }
-  }else{
-      post.likes.push(req.user._id);
-
+  } else {
+    post.likes.push(req.user._id);
   }
   await post.save();
   res.status(200).json({ data: post.likes });
+});
+
+export const makeComment = asyncHandler(async (req, res, next) => {
+  const { postId, text } = req.body;
+  const user = req.user;
+  const post = await Post.findById(postId);
+  post.comments.push({
+    userId: user._id,
+    userProfile: user.profileImg,
+    text,
+    userName: user.name,
+  });
+
+  await post.save();
+  res.status(200).json({ data: post.comments });
 });
