@@ -28,8 +28,32 @@ const userSchema = mongoose.Schema(
     info: {
       type: String,
     },
-    followers: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
-    following: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+    profileImgUrl:String,
+    followers: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    following: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    friends: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    friendsRequest: [
+      {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+
     password: {
       type: String,
       required: [true, "password required"],
@@ -62,7 +86,7 @@ userSchema.pre("save", async function (next) {
 userSchema.post("init", (doc) => {
   if (doc.profileImg) {
     const profileImgUrl = `${process.env.BASE_URL}/users/${doc.profileImg}`;
-    doc.profileImg = profileImgUrl;
+    doc.profileImgUrl = profileImgUrl;
   }
 });
 

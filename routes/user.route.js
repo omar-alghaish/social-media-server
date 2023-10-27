@@ -1,11 +1,14 @@
 import express from "express";
 import { uploadSingleImage } from "../middlewares/uploadImage.middlesare.js";
 import {
+  acceptFriend,
   activate,
+  addFriend,
   changeUserPassword,
   createUser,
   deActivate,
   deleteUser,
+  follow,
   getInfo,
   getLoggedUserData,
   getUser,
@@ -39,6 +42,9 @@ router.post(
 );
 
 router.get("/", getUsers);
+router.post("/addFriend",protect, addFriend)
+router.post("/acceptFriend",protect, acceptFriend)
+router.post("/follow",protect, follow)
 
 router
   .route("/:id")
