@@ -2,12 +2,13 @@ import sharp from "sharp";
 import Post from "../models/post.model.js";
 import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
+import ApiFeatures from "../utils/apiFeatures.js";
 
 export const createPost = asyncHandler(async (req, res, next) => {
   const mediaFiles = req.files;
   const newPost = await Post.create({
     user: req.user.id,
-    userProfile: req.user.profileImg,
+    userProfile: req.user.profileImgUrl,
     userName: req.user.name,
     content: req.body.content,
     media: mediaFiles,
@@ -42,11 +43,34 @@ export const makeComment = asyncHandler(async (req, res, next) => {
   const post = await Post.findById(postId);
   post.comments.push({
     userId: user._id,
-    userProfile: user.profileImg,
+    userProfile: user.profileImgUrl,
     text,
     userName: user.name,
   });
 
   await post.save();
   res.status(200).json({ data: post.comments });
+});
+
+export const getFriendsPosts = asyncHandler(async (req, res, next) => {
+  const friends = req.user.friends;
+  // const friendsPosts = await Post.find({user:{$in: friends}}).po
+ 
+  const documentsCounts = await Post.countDocuments();
+
+  const apiFeatures = new ApiFeatures(
+    Post.find({ user: { $in: friends } }),
+    req.query
+  )
+    .filter()
+    .paginate(documentsCounts)
+    .search()
+    .sort({ createdAt: -1 });
+
+  const { mongooseQuery, pagination } = apiFeatures;
+  const documents = await mongooseQuery;
+
+  res
+    .status(200)
+    .json({ results: documents.length, pagination, data: documents });
 });
