@@ -22,13 +22,16 @@ const userSchema = mongoose.Schema(
     phone: {
       type: String,
     },
+    about: {
+      type: String,
+    },
     profileImg: {
       type: String,
     },
     info: {
       type: String,
     },
-    profileImgUrl:String,
+    profileImgUrl: String,
     followers: [
       {
         type: mongoose.Schema.Types.ObjectId,

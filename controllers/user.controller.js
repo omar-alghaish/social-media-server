@@ -49,12 +49,10 @@ export const updateUser = asyncHandler(async (req, res, next) => {
 });
 
 export const getInfo = asyncHandler(async (req, res, next) => {
-  const user = await User.findById(req.user._id) .populate({
-    path: 'friendsRequest',
-    select: 'profileImg name',
-  })
-  
-
+  const user = await User.findById(req.user._id).populate({
+    path: "friendsRequest",
+    select: "profileImg name",
+  });
 
   if (!user) {
     return next(new ApiError("user not found"));
@@ -101,10 +99,24 @@ export const addFriend = asyncHandler(async (req, res, next) => {
   const { id } = req.body;
   const userToBeFriend = await User.findById(id);
   if (userToBeFriend.friendsRequest.includes(req.user._id)) {
-    return next(new ApiError("you are already send request"));
+    let index = userToBeFriend.friendsRequest.indexOf(req.user._id);
+    userToBeFriend.friendsRequest.splice(index, 1);
+  } else if (!userToBeFriend.followers.includes(req.user._id) ) {
+    userToBeFriend.friendsRequest.push(req.user._id);
+  } else if(req.user.friends.includes(userToBeFriend._id)){
+   
+      const user = await User.findById(req.user._id);
+      let index = userToBeFriend.friends.indexOf(req.user._id);
+      userToBeFriend.friends.splice(index, 1);
+      let index2 = user.friends.indexOf(id);
+      user.friends.splice(index2, 1);
+      await user.save();
+    
+  } else{
+    userToBeFriend.followers.push(req.user._id);
+    userToBeFriend.friendsRequest.push(req.user._id);
   }
-  userToBeFriend.friendsRequest.push(req.user._id);
-  userToBeFriend.followers.push(req.user._id);
+
   await userToBeFriend.save();
   res.status(200).json({ message: "friend request sent" });
 });
@@ -121,7 +133,9 @@ export const acceptFriend = asyncHandler(async (req, res, next) => {
 
   await user.save();
   await userSendRequest.save();
-  res.status(200).json({ message: "accepted" });
+  res
+    .status(200)
+    .json({ message: "accepted", friendRequests: req.user.friendsRequest });
 });
 
 export const follow = asyncHandler(async (req, res, next) => {
@@ -143,5 +157,5 @@ export const follow = asyncHandler(async (req, res, next) => {
   await userToBoFollowed.save();
   await user.save();
 
-  res.status(200).json({message:"success"})
+  res.status(200).json({ message: "success" });
 });

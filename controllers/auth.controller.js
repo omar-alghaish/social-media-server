@@ -7,7 +7,7 @@ import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
 import sendEmail from "../utils/sendEmail.js";
 import restPasswordTmp from "../templates/restPassword.js";
-
+import slugify from "slugify";
 const createToken = (payload) => {
   return jwt.sign({ userId: payload }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRESIN,
@@ -15,11 +15,18 @@ const createToken = (payload) => {
 };
 
 export const singup = asyncHandler(async (req, res, next) => {
+  const slug = slugify(req.body.name, {
+    replacement: "",
+    lower: true,
+    remove: /[*+~.()'"!:@]/g,
+  });
   const user = await User.create({
     name: req.body.name,
+    slug: `@${slug}`,
+    about: req.body.about,
     email: req.body.email,
     password: req.body.password,
-    profileImg: req.body.profileImg
+    profileImg: req.body.profileImg,
   });
 
   const token = createToken(user._id);
@@ -47,7 +54,10 @@ export const login = asyncHandler(async (req, res, next) => {
 export const protect = asyncHandler(async (req, res, next) => {
   // check if token exists in headers
   let token;
-  if (req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+  if (
+    req.headers.authorization &&
+    req.headers.authorization.startsWith("Bearer")
+  ) {
     // Extract token from the authorization header
     token = req.headers.authorization.split(" ")[1];
   }
@@ -63,14 +73,24 @@ export const protect = asyncHandler(async (req, res, next) => {
     // check if user exists
     const currentUser = await User.findById(decoded.userId);
     if (!currentUser) {
-      return next(new ApiError("The user belonging to this token does not exist", 401));
+      return next(
+        new ApiError("The user belonging to this token does not exist", 401)
+      );
     }
 
     // check if user changed his password after the token was issued
     if (currentUser.passwordChangedAt) {
-      const passwordChangedTimestamp = parseInt(currentUser.passwordChangedAt.getTime() / 1000, 10);
+      const passwordChangedTimestamp = parseInt(
+        currentUser.passwordChangedAt.getTime() / 1000,
+        10
+      );
       if (passwordChangedTimestamp > decoded.iat) {
-        return next(new ApiError("User recently changed his password. Please login again.", 401));
+        return next(
+          new ApiError(
+            "User recently changed his password. Please login again.",
+            401
+          )
+        );
       }
     }
 
@@ -120,13 +140,12 @@ export const forgetPassword = asyncHandler(async (req, res, next) => {
   const message = `Hi ${user.name},\n we received a request ot rest password on your accout. \n ${resetCode} \n thanks for helping us keep your account secure `;
 
   try {
-     sendEmail({
+    sendEmail({
       email: user.email,
       subject: "password reset code",
       message,
       html: restPasswordTmp({ code: resetCode, name: user.name }),
     });
-
   } catch (err) {
     user.passwordResetCode = undefined;
     user.passwordResetExpires = undefined;
