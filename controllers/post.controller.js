@@ -6,12 +6,18 @@ import ApiFeatures from "../utils/apiFeatures.js";
 
 export const createPost = asyncHandler(async (req, res, next) => {
   const mediaFiles = req.files;
+  const {content} = req.body
+  const mentions = content.match(/@\w+/g); 
+  const hashtags = content.match(/#\w+/g); 
+
   const newPost = await Post.create({
     user: req.user.id,
     userProfile: req.user.profileImgUrl,
     userName: req.user.name,
-    content: req.body.content,
+    content: content,
     media: mediaFiles,
+    mentions,
+    hashtags
   });
   res.status(200).json({ data: newPost });
 });
@@ -58,14 +64,18 @@ export const getFriendsPosts = asyncHandler(async (req, res, next) => {
  
   const documentsCounts = await Post.countDocuments();
 
+if(friends.length === 0){
+  return next(new ApiError("please make some friends", 400));
+}
   const apiFeatures = new ApiFeatures(
     Post.find({ user: { $in: friends } }),
     req.query
   )
     .filter()
+    .sort()
     .paginate(documentsCounts)
     .search()
-    .sort({ createdAt: -1 });
+    
 
   const { mongooseQuery, pagination } = apiFeatures;
   const documents = await mongooseQuery;
@@ -74,3 +84,26 @@ export const getFriendsPosts = asyncHandler(async (req, res, next) => {
     .status(200)
     .json({ results: documents.length, pagination, data: documents });
 });
+
+
+export const getPostsByHashtag =asyncHandler( async (req, res) => {
+  const { tag } = req.params;
+  const documentsCounts = await Post.countDocuments();
+
+    const apiFeatures = new ApiFeatures(
+      Post.find({ hashtags: `#${tag}` }),
+      req.query
+    )
+      .filter()
+      .paginate(documentsCounts)
+      .search()
+      .sort({ createdAt: -1 });
+  
+    const { mongooseQuery, pagination } = apiFeatures;
+    const documents = await mongooseQuery;
+  
+    res
+      .status(200)
+      .json({ results: documents.length, pagination, data: documents });
+  
+})

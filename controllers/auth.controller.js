@@ -99,7 +99,7 @@ export const protect = asyncHandler(async (req, res, next) => {
     next();
   } catch (error) {
     // Handle token verification errors (expired token, invalid signature, etc.)
-    return next(new ApiError("Invalid token. Please login again.", 401));
+    return next(new ApiError("Please login again.", 401));
   }
 });
 

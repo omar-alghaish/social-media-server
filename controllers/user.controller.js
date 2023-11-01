@@ -101,21 +101,24 @@ export const addFriend = asyncHandler(async (req, res, next) => {
   if (userToBeFriend.friendsRequest.includes(req.user._id)) {
     let index = userToBeFriend.friendsRequest.indexOf(req.user._id);
     userToBeFriend.friendsRequest.splice(index, 1);
-  } else if (!userToBeFriend.followers.includes(req.user._id) ) {
+  } else if (userToBeFriend.followers.includes(req.user._id) ) {
     userToBeFriend.friendsRequest.push(req.user._id);
-  } else if(req.user.friends.includes(userToBeFriend._id)){
-   
-      const user = await User.findById(req.user._id);
-      let index = userToBeFriend.friends.indexOf(req.user._id);
-      userToBeFriend.friends.splice(index, 1);
-      let index2 = user.friends.indexOf(id);
-      user.friends.splice(index2, 1);
-      await user.save();
-    
   } else{
     userToBeFriend.followers.push(req.user._id);
     userToBeFriend.friendsRequest.push(req.user._id);
   }
+  
+  if(req.user.friends.includes(userToBeFriend._id)){
+   
+      const user = await User.findById(req.user._id);
+      let index = userToBeFriend.friends.indexOf(req.user._id);
+      userToBeFriend.friends.splice(index, 1);
+
+      let index2 = user.friends.indexOf(id);
+      user.friends.splice(index2, 1);
+      await user.save();
+    
+  } 
 
   await userToBeFriend.save();
   res.status(200).json({ message: "friend request sent" });
@@ -158,4 +161,16 @@ export const follow = asyncHandler(async (req, res, next) => {
   await user.save();
 
   res.status(200).json({ message: "success" });
+});
+
+
+export const getFriendRequests = asyncHandler(async (req, res, next) => {
+  const friendRequests = await User.findById(req.user._id)
+    .populate({
+      path: 'friendsRequest',
+      select: 'name profileImg', // Select the fields you want to populate
+    })
+    .exec();
+
+  res.status(200).json({ data: friendRequests.friendsRequest });
 });

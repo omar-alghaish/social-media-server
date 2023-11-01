@@ -8,15 +8,17 @@ const postSchema = mongoose.Schema(
       ref: "User",
       required: true,
     },
-    userName:{
-      type:String,
+    userName: {
+      type: String,
     },
-    userProfile:{
-type:String
+    userProfile: {
+      type: String,
     },
     content: {
       type: String,
     },
+    mentions: [{ type: String }], 
+    hashtags: [{ type: String }],
     media: [
       {
         mimetype: String,

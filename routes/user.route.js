@@ -9,6 +9,7 @@ import {
   deActivate,
   deleteUser,
   follow,
+  getFriendRequests,
   getInfo,
   getLoggedUserData,
   getUser,
@@ -42,6 +43,10 @@ router.post(
 );
 
 router.get("/", getUsers);
+router.get("/friendRequests",protect, getFriendRequests);
+
+
+
 router.post("/addFriend",protect, addFriend)
 router.post("/acceptFriend",protect, acceptFriend)
 router.post("/follow",protect, follow)
