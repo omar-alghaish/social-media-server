@@ -3,6 +3,7 @@ import Post from "../models/post.model.js";
 import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
+import notification from "../models/notifications.model.js";
 
 export const createPost = asyncHandler(async (req, res, next) => {
   const mediaFiles = req.files;
@@ -38,6 +39,14 @@ export const likePost = asyncHandler(async (req, res, next) => {
     }
   } else {
     post.likes.push(req.user._id);
+    await notification.create({
+      user: post.user,
+      title: "love",
+      type:1,
+      text: `${req.user.name} love you post`,
+      read: false,
+
+    })
   }
   await post.save();
   res.status(200).json({ data: post.likes });

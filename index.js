@@ -1,16 +1,18 @@
 import path from "path";
+import http from "http"
 import { fileURLToPath } from "url";
 
 import express from "express";
 import cors from "cors";
 import "colors";
+import { Server as SocketServer } from 'socket.io';
 
 import dbConnection from "./configs/database.js";
 import routes from "./routes/index.js";
 import dotenvConfig from "./configs/dotenv.js";
 import morganConfig from "./configs/morgan.js";
 import limiter from "./middlewares/limiter.js";
-import server from "./configs/server.js";
+// import server from "./configs/server.js";
 import ApiError from "./utils/apiError.js";
 import globalError from "./middlewares/error.Middleware.js";
 
@@ -39,6 +41,23 @@ morganConfig(app);
 
 // app.use("/api", limiter);
 
+
+
+const server = http.createServer(app);
+const io = new SocketServer(server,{
+  cors:{
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST"],
+    credentials: true
+
+  }
+});
+
+import { socketConnection } from "./socketio.js";
+socketConnection(io)
+
+
+
 app.use("/api/v1", routes);
 
 app.all("*", (req, res, next) => {
@@ -47,14 +66,22 @@ app.all("*", (req, res, next) => {
 
 app.use(globalError);
 
-server(app);
+// server(app);
 
-process.on("unhandledRejection", (err) => {
-  console.error(
-    `${"unhandledRejection Error:".red} ${err.name} => ${err.message}}`
-  );
-  server.close(() => {
-    console.error(`shutting down...`);
-    process.exit(1);
-  });
+// process.on("unhandledRejection", (err) => {
+//   console.error(
+//     `${"unhandledRejection Error:".red} ${err.name} => ${err.message}}`
+//   );
+//   server.close(() => {
+//     console.error(`shutting down...`);
+//     process.exit(1);
+//   });
+// });
+
+
+
+
+
+server.listen(8000, () => {
+  console.log('server listening on *:3000');
 });
