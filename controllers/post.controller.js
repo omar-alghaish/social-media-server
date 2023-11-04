@@ -117,3 +117,57 @@ export const getPostsByHashtag =asyncHandler( async (req, res) => {
       .json({ results: documents.length, pagination, data: documents });
   
 })
+
+export const reactPost = asyncHandler(async (req, res, next) => {
+  const { reactionType } = req.body;
+  const postId = req.params.postId;
+  const userId = req.user._id;
+
+  const validReactions = ['like', 'love', 'haha', 'wow', 'sad', 'angry'];
+  if (!validReactions.includes(reactionType)) {
+    return res.status(400).json({ error: 'Invalid reaction type' });
+  }
+
+  const post = await Post.findById(postId);
+  if (!post) {
+    return res.status(404).json({ error: 'Post not found' });
+  }
+
+  // Check if the user has already made this reaction
+  const userReactionIndex = post.reactions[reactionType].users.indexOf(userId);
+  const userAlreadyReacted = userReactionIndex !== -1;
+
+  // Remove the previous reaction, if any
+  validReactions.forEach((reaction) => {
+    if (reaction !== reactionType) {
+      const index = post.reactions[reaction].users.indexOf(userId);
+      if (index !== -1) {
+        post.reactions[reaction].users.splice(index, 1);
+        post.reactions[reaction].count--;
+      }
+    }
+  });
+
+  if (userAlreadyReacted) {
+    // User has already made this reaction, remove it
+    post.reactions[reactionType].users.splice(userReactionIndex, 1);
+    post.reactions[reactionType].count--;
+  } else {
+    // User has not made this reaction, add it
+    post.reactions[reactionType].users.push(userId);
+    post.reactions[reactionType].count++;
+    await notification.create({
+      user: post.user,
+      from: req.user._id,
+      title: reactionType,
+      type:1,
+      text: `${req.user.name} make ${reactionType} on your post`,
+      read: false,
+
+    })
+  }
+
+  await post.save();
+
+  res.status(200).json(post);
+});

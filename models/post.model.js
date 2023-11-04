@@ -17,7 +17,7 @@ const postSchema = mongoose.Schema(
     content: {
       type: String,
     },
-    mentions: [{ type: String }], 
+    mentions: [{ type: String }],
     hashtags: [{ type: String }],
     media: [
       {
@@ -33,6 +33,37 @@ const postSchema = mongoose.Schema(
         ref: "User",
       },
     ],
+    reactions: {
+      like: {
+        count: { type: Number, default: 0 },
+        users: [
+          {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "User",
+          },
+        ],
+      },
+      love: {
+        count: { type: Number, default: 0 },
+        users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      },
+      haha: {
+        count: { type: Number, default: 0 },
+        users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      },
+      wow: {
+        count: { type: Number, default: 0 },
+        users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      },
+      sad: {
+        count: { type: Number, default: 0 },
+        users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      },
+      angry: {
+        count: { type: Number, default: 0 },
+        users: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
+      },
+    },
     comments: [
       {
         userId: {
