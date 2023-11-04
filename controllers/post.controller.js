@@ -41,6 +41,7 @@ export const likePost = asyncHandler(async (req, res, next) => {
     post.likes.push(req.user._id);
     await notification.create({
       user: post.user,
+      from: req.user._id,
       title: "love",
       type:1,
       text: `${req.user.name} love you post`,

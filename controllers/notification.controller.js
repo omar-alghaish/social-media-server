@@ -9,7 +9,7 @@ const getAllNotifications =asyncHandler(async (req, res, next) => {
     const documentsCounts = await notification.countDocuments();
 
     const apiFeatures = new ApiFeatures(
-      notification.find({ user: req.user._id }),
+      notification.find({ user: req.user._id }).populate("from"),
       req.query
     )
       .filter()
