@@ -42,7 +42,7 @@ class ApiFeatures {
 
       this.mongooseQuery = this.mongooseQuery.find(query);
     }
-    return this;
+    return this
   }
 
   paginate(countOfDocuments) {
