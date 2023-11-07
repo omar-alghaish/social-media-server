@@ -30,3 +30,9 @@ export const getFriendsStories = asyncHandler(async(req,res,next)=>{
     res.status(200).json({ data: friendStories });
 
 })
+
+export const getStoriesById = asyncHandler(async(req,res,next)=>{
+  const stories = await Story.find({ user: req.body.id}).sort({ created_at: -1 });
+  res.status(200).json({ data: stories });
+
+})
