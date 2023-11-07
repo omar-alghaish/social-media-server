@@ -1,0 +1,26 @@
+import Story from "../models/story.model.js";
+import asyncHandler from "express-async-handler";
+
+
+export const createStory = asyncHandler(async(req,res, next)=>{
+    const {content, expiresInDays} = req.body;
+    const mediaFiles = req.files
+    const mentions = content.match(/@\w+/g); 
+    const hashtags = content.match(/#\w+/g); 
+
+    const expiresInMilliseconds = expiresInDays * 24 * 60 * 60 * 1000; 
+      const expires_at = new Date(Date.now() + expiresInMilliseconds);
+
+    const story = await Story.create({
+        user: req.user._id,
+        userName:req.user.name,
+        userProfile:req.user.profileImgUrl,
+        content,
+        media:mediaFiles,
+        mentions,
+        hashtags,
+        expires_at
+    })
+    res.status(200).json({ data: story });
+
+})

@@ -6,7 +6,7 @@ import { protect } from "../controllers/auth.controller.js";
 
 const router = express.Router()
 
-router.post('/create',protect, upload.array('media', 5), createPost);
+router.post('/create',protect, upload("posts").array('media', 100), createPost);
 router.get("/getPosts/:id",getUserPost)
 router.get("/tags/:tag",getPostsByHashtag)
 
