@@ -1,4 +1,5 @@
 import Story from "../models/story.model.js";
+import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 
 export const createStory = asyncHandler(async (req, res, next) => {
@@ -29,17 +30,25 @@ export const getFriendsStories = asyncHandler(async (req, res, next) => {
   // Create an array to store the results
   const friendsStories = [];
 
-  // Iterate through the user's friends and fetch their active stories
+  // Iterate through the user's friends and fetch their active stories along with name and profileImgUrl
   for (const friendId of friends) {
+    // Find friend's information (name and profileImgUrl) from the User model
+    const friendInfo = await User.findById(friendId, 'name profileImgUrl');
+
     // Find friend's active stories
     const friendStories = await Story.find({
       user: friendId,
       isActive: true,
     });
 
-    // If the friend has active stories, add them to the result array
+    // If the friend has active stories, add their info and stories to the result array
     if (friendStories.length > 0) {
-      friendsStories.push(friendStories);
+      friendsStories.push({
+        friendId: friendId,
+        name: friendInfo.name,
+        profileImgUrl: friendInfo.profileImgUrl,
+        stories: friendStories,
+      });
     }
   }
 
