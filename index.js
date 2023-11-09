@@ -5,6 +5,7 @@ import { fileURLToPath } from "url";
 import express from "express";
 import cors from "cors";
 import "colors";
+import cron from 'node-cron';
 import { Server as SocketServer } from 'socket.io';
 
 import dbConnection from "./configs/database.js";
@@ -20,18 +21,19 @@ dotenvConfig();
 dbConnection();
 
 const app = express();
-// const corsOptions = {
-//   origin: 'https://arabia1.web.app', // Update this with your frontend domain
-//   methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
-//   credentials: true,
-//   optionsSuccessStatus: 204,
-// };
 
-// app.use(cors(corsOptions));
 app.use(cors());
 
 
 app.use(express.json());
+
+
+// Schedule the task to run every hour
+cron.schedule('0 * * * *', async () => {
+  console.log('Running story expiration check...');
+  await disableExpiredStories();
+  console.log('Story expiration check complete.');
+});
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -54,6 +56,7 @@ const io = new SocketServer(server,{
 });
 
 import { socketConnection } from "./socketio.js";
+import { disableExpiredStories } from "./middlewares/storyExpirationService.js";
 socketConnection(io)
 
 

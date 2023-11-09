@@ -38,6 +38,10 @@ const storySchema = new mongoose.Schema(
         ref: "User", // Reference to the User model for users who viewed the story
       },
     ],
+    isActive: {
+      type: Boolean,
+      default:true,
+    },
     reactions: {
       like: {
         count: { type: Number, default: 0 },
