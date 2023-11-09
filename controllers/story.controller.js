@@ -23,16 +23,22 @@ export const createStory = asyncHandler(async (req, res, next) => {
   res.status(200).json({ data: story });
 });
 
+export const getFriendsStories = asyncHandler(async (req, res, next) => {
+  const friends = req.user.friends;
+  const friendStories = await Story.find({ user: { $in: friends } }).sort({
+    created_at: -1,
+  });
+  res.status(200).json({ data: friendStories });
+});
 
-export const getFriendsStories = asyncHandler(async(req,res,next)=>{
-    const friends = req.user.friends;
-    const friendStories = await Story.find({ user: { $in: friends } }).sort({ created_at: -1 });
-    res.status(200).json({ data: friendStories });
-
-})
-
-export const getStoriesById = asyncHandler(async(req,res,next)=>{
-  const stories = await Story.find({ user: req.body.id}).sort({ created_at: -1 });
+export const getStoriesById = asyncHandler(async (req, res, next) => {
+  const stories = await Story.find({ user: req.body.id }).sort({
+    created_at: -1,
+  });
   res.status(200).json({ data: stories });
+});
 
-})
+export const deleteStory = asyncHandler(async (req, res, next) => {
+  const story = await Story.find({ user: req.user._id, _id: req.body.id });
+  res.status(200).json({ message: "story deleted" });
+});
