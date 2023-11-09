@@ -39,6 +39,6 @@ export const getStoriesById = asyncHandler(async (req, res, next) => {
 });
 
 export const deleteStory = asyncHandler(async (req, res, next) => {
-  const story = await Story.find({ user: req.user._id, _id: req.body.id });
+  const story = await Story.findOneAndDelete({ user: req.user._id, _id: req.body.id });
   res.status(200).json({ message: "story deleted" });
 });
