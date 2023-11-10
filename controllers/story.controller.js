@@ -69,3 +69,7 @@ export const deleteStory = asyncHandler(async (req, res, next) => {
   });
   res.status(200).json({ message: "story deleted" });
 });
+
+export const updateStory = asyncHandler(async(req,res,next)=>{
+  
+})
