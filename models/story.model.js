@@ -18,6 +18,9 @@ const storySchema = new mongoose.Schema(
     content: {
       type: String,
     },
+    backgroundColor: {
+      type: String,
+    },
     mentions: [{ type: String }],
     hashtags: [{ type: String }],
     media: [
@@ -40,7 +43,7 @@ const storySchema = new mongoose.Schema(
     ],
     isActive: {
       type: Boolean,
-      default:true,
+      default: true,
     },
     reactions: {
       like: {
@@ -120,7 +123,6 @@ storySchema.post("save", (doc) => {
     doc.media = mediaArray;
   }
 });
-
 
 const Story = mongoose.model("Story", storySchema);
 
