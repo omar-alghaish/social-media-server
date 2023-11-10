@@ -3,13 +3,13 @@ import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 
 export const createStory = asyncHandler(async (req, res, next) => {
-  const { content, expiresInDays } = req.body;
+  const { content, expiresInDays, objects  } = req.body;
   const mediaFiles = req.files;
   const mentions = content?.match(/@\w+/g);
   const hashtags = content?.match(/#\w+/g);
 
   const expiresInMilliseconds = expiresInDays * 24 * 60 * 60 * 1000;
-  const expires_at = new Date(Date.now() + expiresInMilliseconds);
+  // const expires_at = new Date(Date.now() + expiresInMilliseconds);
 
   const story = await Story.create({
     user: req.user._id,
@@ -19,7 +19,8 @@ export const createStory = asyncHandler(async (req, res, next) => {
     media: mediaFiles,
     mentions,
     hashtags,
-    expires_at,
+    // expires_at,
+    objects:objects
   });
   res.status(200).json({ data: story });
 });

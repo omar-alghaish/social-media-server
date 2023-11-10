@@ -33,7 +33,7 @@ const storySchema = new mongoose.Schema(
     ],
     expires_at: {
       type: Date, // Date when the story will expire and be automatically removed
-      required: true,
+      // required: true,
     },
     viewers: [
       {
@@ -90,6 +90,29 @@ const storySchema = new mongoose.Schema(
           type: Date,
           default: Date.now,
         },
+      },
+    ],
+    objects: [
+      {
+        type: { type: String, required: true }, // 'image' or 'textbox'
+        text: { type: String }, // Text content for textbox
+        position: {
+          left: { type: Number, required: true },
+          top: { type: Number, required: true },
+        },
+        scale: {
+          width: { type: Number },
+          height: { type: Number },
+        },
+        angle: { type: Number },
+        font: {
+          size: { type: Number },
+          family: { type: String },
+          weight: { type: String },
+        },
+        textAlign: { type: String }, // Only for textboxes
+        fill: { type: String }, // Color
+        name: { type: String }, // Only for textboxes
       },
     ],
   },
