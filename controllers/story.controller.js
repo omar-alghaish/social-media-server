@@ -3,13 +3,13 @@ import User from "../models/user.model.js";
 import asyncHandler from "express-async-handler";
 
 export const createStory = asyncHandler(async (req, res, next) => {
-  const { content, expiresInDays, objects  } = req.body;
+  const { content, expiresInDays, objects } = req.body;
   const mediaFiles = req.files;
   const mentions = content?.match(/@\w+/g);
   const hashtags = content?.match(/#\w+/g);
 
   const expiresInMilliseconds = expiresInDays * 24 * 60 * 60 * 1000;
-  // const expires_at = new Date(Date.now() + expiresInMilliseconds);
+  const expires_at = new Date(Date.now() + expiresInMilliseconds);
 
   const story = await Story.create({
     user: req.user._id,
@@ -19,8 +19,8 @@ export const createStory = asyncHandler(async (req, res, next) => {
     media: mediaFiles,
     mentions,
     hashtags,
-    // expires_at,
-    objects:objects
+    expires_at,
+    objects: JSON.parse(objects),
   });
   res.status(200).json({ data: story });
 });
@@ -34,7 +34,7 @@ export const getFriendsStories = asyncHandler(async (req, res, next) => {
   // Iterate through the user's friends and fetch their active stories along with name and profileImgUrl
   for (const friendId of friends) {
     // Find friend's information (name and profileImgUrl) from the User model
-    const friendInfo = await User.findById(friendId, 'name profileImgUrl');
+    const friendInfo = await User.findById(friendId, "name profileImgUrl");
 
     // Find friend's active stories
     const friendStories = await Story.find({
@@ -71,6 +71,4 @@ export const deleteStory = asyncHandler(async (req, res, next) => {
   res.status(200).json({ message: "story deleted" });
 });
 
-export const updateStory = asyncHandler(async(req,res,next)=>{
-  
-})
+export const updateStory = asyncHandler(async (req, res, next) => {});

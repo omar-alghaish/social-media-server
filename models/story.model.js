@@ -100,6 +100,7 @@ const storySchema = new mongoose.Schema(
           left: { type: Number, required: true },
           top: { type: Number, required: true },
         },
+        text:String,
         scale: {
           width: { type: Number },
           height: { type: Number },
