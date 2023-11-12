@@ -1,6 +1,6 @@
 import express from "express";
 import { upload } from "../middlewares/uploadImage.middlesare.js";
-import { createPost, getFriendsPosts, getPostsByHashtag, getUserPost, likePost, makeComment, reactPost } from "../controllers/post.controller.js";
+import { createPost, getFriendsPosts, getPost, getPostsByHashtag, getUserPost, likePost, makeComment, reactPost } from "../controllers/post.controller.js";
 import { protect } from "../controllers/auth.controller.js";
 
 
@@ -14,6 +14,7 @@ router.get("/friendsPosts", protect, getFriendsPosts)
 router.post("/like",protect,likePost)
 router.post("/comment",protect,makeComment)
 router.post("/:postId/react",protect,reactPost)
+router.get("/post/:id",getPost)
 
 
 

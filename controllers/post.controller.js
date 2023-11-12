@@ -4,6 +4,7 @@ import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import ApiFeatures from "../utils/apiFeatures.js";
 import notification from "../models/notifications.model.js";
+import { getOne } from "./handlerFactory.js";
 
 export const createPost = asyncHandler(async (req, res, next) => {
   const mediaFiles = req.files;
@@ -171,3 +172,5 @@ export const reactPost = asyncHandler(async (req, res, next) => {
 
   res.status(200).json(post);
 });
+
+export const getPost = getOne(Post);
