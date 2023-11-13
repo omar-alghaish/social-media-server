@@ -10,7 +10,6 @@ import {
   deleteUser,
   follow,
   getFriendRequests,
-  getInfo,
   getLoggedUserData,
   getUser,
   getUsers,
@@ -18,7 +17,6 @@ import {
   updateUser,
 } from "../controllers/user.controller.js";
 import {
-  changeUserPasswordValidator,
   createUserValidator,
   deleteUserValidator,
   getUserValidator,
@@ -32,8 +30,6 @@ router.get("/me", protect, getLoggedUserData, getUser);
 router.get("/me/deActive", protect, deActivate);
 router.get("/me/active", protect, activate);
 
-// router.use(protect, allowedTo("admin", "manager"));
-
 router.post(
   "/create",
   uploadSingleImage("profileImg"),
@@ -43,13 +39,11 @@ router.post(
 );
 
 router.get("/", getUsers);
-router.get("/friendRequests",protect, getFriendRequests);
+router.get("/friendRequests", protect, getFriendRequests);
 
-
-
-router.post("/addFriend",protect, addFriend)
-router.post("/acceptFriend",protect, acceptFriend)
-router.post("/follow",protect, follow)
+router.post("/addFriend", protect, addFriend);
+router.post("/acceptFriend", protect, acceptFriend);
+router.post("/follow", protect, follow);
 
 router
   .route("/:id")

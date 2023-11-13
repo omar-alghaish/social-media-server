@@ -1,12 +1,12 @@
 import path from "path";
-import http from "http"
+import http from "http";
 import { fileURLToPath } from "url";
 
 import express from "express";
 import cors from "cors";
 import "colors";
-import cron from 'node-cron';
-import { Server as SocketServer } from 'socket.io';
+import cron from "node-cron";
+import { Server as SocketServer } from "socket.io";
 
 import dbConnection from "./configs/database.js";
 import routes from "./routes/index.js";
@@ -24,15 +24,13 @@ const app = express();
 
 app.use(cors());
 
-
 app.use(express.json());
 
-
 // Schedule the task to run every hour
-cron.schedule('0 * * * *', async () => {
-  console.log('Running story expiration check...');
+cron.schedule("0 * * * *", async () => {
+  console.log("Running story expiration check...");
   await disableExpiredStories();
-  console.log('Story expiration check complete.');
+  console.log("Story expiration check complete.");
 });
 
 const __filename = fileURLToPath(import.meta.url);
@@ -41,25 +39,20 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "uploads")));
 morganConfig(app);
 
-// app.use("/api", limiter);
-
-
+app.use("/api", limiter);
 
 const server = http.createServer(app);
-const io = new SocketServer(server,{
-  cors:{
+const io = new SocketServer(server, {
+  cors: {
     origin: "http://localhost:3000",
     methods: ["GET", "POST"],
-    credentials: true
-
-  }
+    credentials: true,
+  },
 });
 
 import { socketConnection } from "./socketio.js";
 import { disableExpiredStories } from "./middlewares/storyExpirationService.js";
-socketConnection(io)
-
-
+socketConnection(io);
 
 app.use("/api/v1", routes);
 
@@ -81,10 +74,6 @@ app.use(globalError);
 //   });
 // });
 
-
-
-
-
 server.listen(8000, () => {
-  console.log('server listening on *:3000');
+  console.log("server listening on *:3000");
 });

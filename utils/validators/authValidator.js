@@ -1,9 +1,7 @@
-import { check, body } from "express-validator";
+import { check } from "express-validator";
 import slugify from "slugify";
-import bcrypt from "bcrypt";
 import validatorMiddleware from "../../middlewares/validatorMiddleware.js";
 import User from "../../models/user.model.js";
-
 
 export const getUserValidator = [
   check("id").isMongoId().withMessage("Invalid User id format"),
@@ -65,7 +63,6 @@ export const loginValidator = [
     .withMessage("password required")
     .isLength({ min: 6 })
     .withMessage("password must be at least 6 characters"),
-  
+
   validatorMiddleware,
 ];
-

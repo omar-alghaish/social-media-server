@@ -1,12 +1,11 @@
 import mongoose from "mongoose";
 import modelOptions from "./model.option.js";
 
-// Define the schema for social media stories
 const storySchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "User", // Reference to the User model for the creator of the story
+      ref: "User",
       required: true,
     },
     userName: {
@@ -32,13 +31,13 @@ const storySchema = new mongoose.Schema(
       },
     ],
     expires_at: {
-      type: Date, // Date when the story will expire and be automatically removed
-      // required: true,
+      type: Date,
+      required: true,
     },
     viewers: [
       {
         type: mongoose.Schema.Types.ObjectId,
-        ref: "User", // Reference to the User model for users who viewed the story
+        ref: "User",
       },
     ],
     isActive: {
@@ -80,7 +79,7 @@ const storySchema = new mongoose.Schema(
       {
         user: {
           type: mongoose.Schema.Types.ObjectId,
-          ref: "User", // Reference to the User model for the commenter
+          ref: "User",
         },
         text: {
           type: String,
@@ -94,13 +93,13 @@ const storySchema = new mongoose.Schema(
     ],
     objects: [
       {
-        type: { type: String, required: true }, // 'image' or 'textbox'
-        text: { type: String }, // Text content for textbox
+        type: { type: String, required: true },
+        text: { type: String },
         position: {
           left: { type: Number, required: true },
           top: { type: Number, required: true },
         },
-        text:String,
+        text: String,
         scale: {
           width: { type: Number },
           height: { type: Number },
@@ -111,9 +110,9 @@ const storySchema = new mongoose.Schema(
           family: { type: String },
           weight: { type: String },
         },
-        textAlign: { type: String }, // Only for textboxes
-        fill: { type: String }, // Color
-        name: { type: String }, // Only for textboxes
+        textAlign: { type: String },
+        fill: { type: String },
+        name: { type: String },
       },
     ],
   },

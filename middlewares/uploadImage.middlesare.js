@@ -1,17 +1,17 @@
 import multer from "multer";
 
-const storage = (folder)=>{
- return multer.diskStorage({
+const storage = (folder) => {
+  return multer.diskStorage({
     destination: (req, file, cb) => {
       cb(null, `uploads/${folder}`); // Store files in the 'uploads' directory
     },
     filename: (req, file, cb) => {
-      const arr = []
-      const filename = Date.now() + '-' + file.originalname
+      const arr = [];
+      const filename = Date.now() + "-" + file.originalname;
       cb(null, filename); // Set a unique filename for each uploaded file
     },
   });
-}
+};
 
 // const storage = multer.diskStorage({
 //   destination: (req, file, cb) => {
@@ -24,11 +24,8 @@ const storage = (folder)=>{
 //   },
 // });
 
-export const upload = (folder) => multer({ storage: storage(folder), limits: { fileSize: 1024 * 1024 * 100 } }); // Limit file size to 5 MB
-
-
-
-
+export const upload = (folder) =>
+  multer({ storage: storage(folder), limits: { fileSize: 1024 * 1024 * 100 } }); // Limit file size to 5 MB
 
 const multerOptions = () => {
   // const multerStorage = multer.diskStorage({
@@ -46,7 +43,7 @@ const multerOptions = () => {
   const multerStorage = multer.memoryStorage();
 
   const multerFilter = function (req, file, cb) {
-    console.log(file)
+    console.log(file);
     if (file.mimetype.split("/")[0] === "image") {
       cb(null, true);
     } else {

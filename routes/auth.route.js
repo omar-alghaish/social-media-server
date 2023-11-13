@@ -29,5 +29,4 @@ router.post("/verifyResetCode", verifyResetCode);
 router.put("/resetPassword", resetPassword);
 router.get("/info", protect, getInfo);
 
-
 export default router;

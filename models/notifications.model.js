@@ -1,9 +1,9 @@
-import mongoose from 'mongoose'
+import mongoose from "mongoose";
 
 const notificationSchema = new mongoose.Schema(
   {
-    user: { type: mongoose.Schema.Types.ObjectId,ref: "User", require: true },
-    from: { type: mongoose.Schema.Types.ObjectId,ref: "User", require: true },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User", require: true },
+    from: { type: mongoose.Schema.Types.ObjectId, ref: "User", require: true },
 
     title: { type: String, require: true },
     type: { type: Number, required: true },
@@ -13,5 +13,5 @@ const notificationSchema = new mongoose.Schema(
   {
     timestamps: true,
   }
-)
-export default mongoose.model('notification', notificationSchema)
+);
+export default mongoose.model("notification", notificationSchema);

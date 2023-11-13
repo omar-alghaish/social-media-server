@@ -1,5 +1,4 @@
 import crypto from "crypto";
-
 import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
 import User from "../models/user.model.js";
@@ -8,6 +7,8 @@ import bcrypt from "bcrypt";
 import sendEmail from "../utils/sendEmail.js";
 import restPasswordTmp from "../templates/restPassword.js";
 import slugify from "slugify";
+
+
 const createToken = (payload) => {
   return jwt.sign({ userId: payload }, process.env.JWT_SECRET_KEY, {
     expiresIn: process.env.JWT_EXPIRESIN,

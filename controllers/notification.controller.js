@@ -1,29 +1,29 @@
 import notification from "../models/notifications.model.js";
-import asyncHandler from "express-async-handler"
+import asyncHandler from "express-async-handler";
 import ApiFeatures from "../utils/apiFeatures.js";
-import ApiError from "../utils/apiError.js";
+
 // @desc Get all notifications
 // @Route GET /notes
 // @Access Private
-const getAllNotifications =asyncHandler(async (req, res, next) => {
-    const documentsCounts = await notification.countDocuments();
+const getAllNotifications = asyncHandler(async (req, res, next) => {
+  const documentsCounts = await notification.countDocuments();
 
-    const apiFeatures = new ApiFeatures(
-      notification.find({ user: req.user._id }).populate("from"),
-      req.query
-    )
-      .filter()
-      .paginate(documentsCounts)
-      .search()
-      .sort({ createdAt: -1 });
-  
-    const { mongooseQuery, pagination } = apiFeatures;
-    const documents = await mongooseQuery;
-  
-    res
-      .status(200)
-      .json({ results: documents.length, pagination, data: documents });
-}) 
+  const apiFeatures = new ApiFeatures(
+    notification.find({ user: req.user._id }).populate("from"),
+    req.query
+  )
+    .filter()
+    .paginate(documentsCounts)
+    .search()
+    .sort({ createdAt: -1 });
+
+  const { mongooseQuery, pagination } = apiFeatures;
+  const documents = await mongooseQuery;
+
+  res
+    .status(200)
+    .json({ results: documents.length, pagination, data: documents });
+});
 
 // @desc delete a notification
 // @Route DELETE /notifications
@@ -61,7 +61,7 @@ const deleteAllNotifications = async (req, res) => {
   if (!notificationsDeleteMany) {
     return res
       .status(400)
-      .json({ message: 'Error Deleting all notifications as read' });
+      .json({ message: "Error Deleting all notifications as read" });
   }
   res.json({ message: `All notifications for user ${id}marked was deleted` });
 };
@@ -75,7 +75,7 @@ const markOneNotificationasread = async (req, res) => {
   }
   const updateNotification = await notification.find({ id }).exec();
   if (!updateNotification) {
-    return res.status(400).json({ message: 'No notifications found' });
+    return res.status(400).json({ message: "No notifications found" });
   }
   updateNotification.read = false;
   await updateNotification.save();
@@ -96,11 +96,11 @@ const markAllNotificationsAsRead = async (req, res) => {
   if (!notificationsUpdateMany) {
     return res
       .status(400)
-      .json({ message: 'Error Marking all notifications as read' });
+      .json({ message: "Error Marking all notifications as read" });
   }
   res.json({ message: `All notifications for user ${id}marked as read` });
 };
-export default  {
+export default {
   getAllNotifications,
   deleteNotification,
   deleteAllNotifications,

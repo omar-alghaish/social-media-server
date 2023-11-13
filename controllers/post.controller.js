@@ -1,4 +1,3 @@
-import sharp from "sharp";
 import Post from "../models/post.model.js";
 import asyncHandler from "express-async-handler";
 import ApiError from "../utils/apiError.js";
@@ -8,9 +7,9 @@ import { getOne } from "./handlerFactory.js";
 
 export const createPost = asyncHandler(async (req, res, next) => {
   const mediaFiles = req.files;
-  const {content} = req.body
-  const mentions = content.match(/@\w+/g); 
-  const hashtags = content.match(/#\w+/g); 
+  const { content } = req.body;
+  const mentions = content.match(/@\w+/g);
+  const hashtags = content.match(/#\w+/g);
 
   const newPost = await Post.create({
     user: req.user.id,
@@ -19,7 +18,7 @@ export const createPost = asyncHandler(async (req, res, next) => {
     content: content,
     media: mediaFiles,
     mentions,
-    hashtags
+    hashtags,
   });
   res.status(200).json({ data: newPost });
 });
@@ -44,11 +43,10 @@ export const likePost = asyncHandler(async (req, res, next) => {
       user: post.user,
       from: req.user._id,
       title: "love",
-      type:1,
+      type: 1,
       text: `${req.user.name} love you post`,
       read: false,
-
-    })
+    });
   }
   await post.save();
   res.status(200).json({ data: post.likes });
@@ -71,13 +69,11 @@ export const makeComment = asyncHandler(async (req, res, next) => {
 
 export const getFriendsPosts = asyncHandler(async (req, res, next) => {
   const friends = req.user.friends;
-  // const friendsPosts = await Post.find({user:{$in: friends}}).po
- 
   const documentsCounts = await Post.countDocuments();
 
-if(friends.length === 0){
-  return next(new ApiError("please make some friends", 400));
-}
+  if (friends.length === 0) {
+    return next(new ApiError("please make some friends", 400));
+  }
   const apiFeatures = new ApiFeatures(
     Post.find({ user: { $in: friends } }),
     req.query
@@ -85,8 +81,7 @@ if(friends.length === 0){
     .filter()
     .sort()
     .paginate(documentsCounts)
-    .search()
-    
+    .search();
 
   const { mongooseQuery, pagination } = apiFeatures;
   const documents = await mongooseQuery;
@@ -96,42 +91,49 @@ if(friends.length === 0){
     .json({ results: documents.length, pagination, data: documents });
 });
 
-
-export const getPostsByHashtag =asyncHandler( async (req, res) => {
+export const getPostsByHashtag = asyncHandler(async (req, res) => {
   const { tag } = req.params;
   const documentsCounts = await Post.countDocuments();
 
-    const apiFeatures = new ApiFeatures(
-      Post.find({ hashtags: `#${tag}` }),
-      req.query
-    )
-      .filter()
-      .paginate(documentsCounts)
-      .search()
-      .sort({ createdAt: -1 });
-  
-    const { mongooseQuery, pagination } = apiFeatures;
-    const documents = await mongooseQuery;
-  
-    res
-      .status(200)
-      .json({ results: documents.length, pagination, data: documents });
-  
-})
+  const apiFeatures = new ApiFeatures(
+    Post.find({ hashtags: `#${tag}` }),
+    req.query
+  )
+    .filter()
+    .paginate(documentsCounts)
+    .search()
+    .sort({ createdAt: -1 });
+
+  const { mongooseQuery, pagination } = apiFeatures;
+  const documents = await mongooseQuery;
+
+  res
+    .status(200)
+    .json({ results: documents.length, pagination, data: documents });
+});
 
 export const reactPost = asyncHandler(async (req, res, next) => {
   const { reactionType } = req.body;
   const postId = req.params.postId;
   const userId = req.user._id;
 
-  const validReactions = ['like', 'love', 'haha', 'wow', 'sad', 'angry', 'lying', 'partying'];
+  const validReactions = [
+    "like",
+    "love",
+    "haha",
+    "wow",
+    "sad",
+    "angry",
+    "lying",
+    "partying",
+  ];
   if (!validReactions.includes(reactionType)) {
-    return res.status(400).json({ error: 'Invalid reaction type' });
+    return res.status(400).json({ error: "Invalid reaction type" });
   }
 
   const post = await Post.findById(postId);
   if (!post) {
-    return res.status(404).json({ error: 'Post not found' });
+    return res.status(404).json({ error: "Post not found" });
   }
 
   // Check if the user has already made this reaction
@@ -161,11 +163,10 @@ export const reactPost = asyncHandler(async (req, res, next) => {
       user: post.user,
       from: req.user._id,
       title: reactionType,
-      type:1,
+      type: 1,
       text: `${req.user.name} make ${reactionType} on your post`,
       read: false,
-
-    })
+    });
   }
 
   await post.save();

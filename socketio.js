@@ -1,10 +1,10 @@
-import user from './models/user.model.js'
-import notification from './models/notifications.model.js'
+import user from "./models/user.model.js";
+import notification from "./models/notifications.model.js";
 let usersio = [];
 
 export const socketConnection = function (io) {
-  io.on('connection', (socket) => {
-    socket.on('setUserId', async (userId) => {
+  io.on("connection", (socket) => {
+    socket.on("setUserId", async (userId) => {
       if (userId) {
         const oneUser = await user.findById(userId).lean().exec();
         if (oneUser) {
@@ -15,14 +15,14 @@ export const socketConnection = function (io) {
         }
       }
     });
-    socket.on('getNotificationsLength', async (userId) => {
+    socket.on("getNotificationsLength", async (userId) => {
       const notifications = await notification
         .find({ user: userId, read: false })
         .lean();
-      usersio[userId]?.emit('notificationsLength', notifications.length || 0);
+      usersio[userId]?.emit("notificationsLength", notifications.length || 0);
     });
 
-    socket.on('disconnect', (userId) => {
+    socket.on("disconnect", (userId) => {
       console.log(`🔥 user with id ${userId} disconnected from socket`);
       usersio[userId] = null;
     });
