@@ -38,6 +38,10 @@ export const singup = asyncHandler(async (req, res, next) => {
 export const login = asyncHandler(async (req, res, next) => {
   const user = await User.findOne({ email: req.body.email });
 
+  if(!user){
+    return next(new ApiError("there is no user for this email", 404))
+  }
+
   const isCorrectPassword = await bcrypt.compare(
     req.body.password,
     user.password
