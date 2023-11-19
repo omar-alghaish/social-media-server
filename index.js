@@ -12,7 +12,7 @@ import dbConnection from "./configs/database.js";
 import routes from "./routes/index.js";
 import dotenvConfig from "./configs/dotenv.js";
 import morganConfig from "./configs/morgan.js";
-import limiter from "./middlewares/limiter.js";
+// import limiter from "./middlewares/limiter.js";
 // import server from "./configs/server.js";
 import ApiError from "./utils/apiError.js";
 import globalError from "./middlewares/error.Middleware.js";
@@ -39,7 +39,7 @@ const __dirname = path.dirname(__filename);
 app.use(express.static(path.join(__dirname, "uploads")));
 morganConfig(app);
 
-app.use("/api", limiter);
+// app.use("/api", limiter);
 
 const server = http.createServer(app);
 const io = new SocketServer(server, {
